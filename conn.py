@@ -170,3 +170,24 @@ class MySQLDatabase():
 
         # If the result is None or empty, return 0, otherwise return the total sales
         return df['total_route_sales'].values[0] if not df.empty and pd.notna(df['total_route_sales'].values[0]) else 0
+
+    def get_client_product_sales(self, client_name, selected_month=None):
+        query = """
+            SELECT 
+                customer_name, 
+                item_description, 
+                SUM(quantity) AS total_quantity_sold 
+            FROM 
+                sales_per_client
+            WHERE 
+                customer_name = %s
+        """
+        # If a specific month is selected, filter by that month
+        if selected_month and selected_month != 'All':
+            query += " AND month = %s GROUP BY customer_name, item_description"
+            df = pd.read_sql(query, self.conn, params=[client_name, selected_month])
+        else:
+            query += " GROUP BY customer_name, item_description"
+            df = pd.read_sql(query, self.conn, params=[client_name])
+        
+        return df

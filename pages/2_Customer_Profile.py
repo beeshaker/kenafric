@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from conn import MySQLDatabase  # Import the Database class
 import numpy as np
+import plotly.express as px
 
 # Initialize the database connection
 db = MySQLDatabase()
@@ -18,7 +19,38 @@ if selected_client:
     client_sales_df = db.get_client_sales(selected_client)
 
     # Define the correct order of months
-    month_order = ['Jan','Feb', 'March', 'April', 'May', 'June', 'July', 'August', 'September']
+    month_order = ['All','Jan','Feb', 'March', 'April', 'May', 'June', 'July', 'August', 'September']
+    
+    selected_month = st.selectbox("Select a Month for Product Breakdown", month_order)
+
+    # Automatically fetch product sales data based on the selected client and month
+    if selected_month == 'All':
+        product_sales_df = db.get_client_product_sales(selected_client)  # Cumulative data for all months
+    else:
+        product_sales_df = db.get_client_product_sales(selected_client, selected_month)  # Data for selected month
+
+    # If "All" is selected, show cumulative data for all months
+    if selected_month == 'All':
+        st.subheader(f"Cumulative Product Breakdown for {selected_client}")
+        # Generate cumulative pie chart
+        fig_pie = px.pie(product_sales_df, values='total_quantity_sold', names='item_description',
+                        title=f"Cumulative Product Breakdown for {selected_client}")
+    else:
+        # Data for the selected month is already returned by `get_client_product_sales`
+        if not product_sales_df.empty:
+            st.subheader(f"Product Breakdown for {selected_month}")
+
+            # Generate the pie chart for the selected month
+            fig_pie = px.pie(product_sales_df, values='total_quantity_sold', names='item_description',
+                            title=f"Product Breakdown for {selected_client} in {selected_month}")
+        else:
+            st.warning(f"No data available for {selected_month}.")
+            fig_pie = None
+
+    # Display the pie chart if it exists
+    if fig_pie:
+        st.plotly_chart(fig_pie)
+
 
     # Convert 'month' column to categorical with the correct order and sort the dataframe
     client_sales_df['month'] = pd.Categorical(client_sales_df['month'], categories=month_order, ordered=True)
