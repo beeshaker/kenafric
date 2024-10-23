@@ -1,7 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
-from conn import MySQLDatabase  # Import the Database class
+from conn1 import MySQLDatabase  # Import the Database class
 import pandas as pd
 
 
@@ -51,7 +51,7 @@ def plot_customers_sales_per_month(df):
         legend_title='Customer',
         hovermode='x unified',  # This will show hover info for all lines on the same x-axis
         margin=dict(l=0, r=0, t=30, b=30),  # Adjust margins to fit the legend
-        legend=dict(x=1, y=1, traceorder='normal')  # Position the legend outside
+        legend=dict(x=1, y=1, traceorder='normal')  # Position the legend outside the plot
     )
 
     fig.update_xaxes(tickangle=-45)  # Rotate x-axis labels for better readability
@@ -61,7 +61,7 @@ def plot_customers_sales_per_month(df):
 plot_customers_sales_per_month(top_customers_sales_df)
 
 # --- Route Sales per Month ---
-st.header("Route Sales per Month")
+#st.header("Route Sales per Month")
 route_sales_df = db.get_route_sales_per_month()
 
 # Define the correct order of months
@@ -105,13 +105,13 @@ def plot_route_sales_per_month(df):
     # Rotate x-axis labels for better readability
     fig.update_xaxes(tickangle=-45, categoryorder='array', categoryarray=month_order)
 
-    st.plotly_chart(fig)
+    #st.plotly_chart(fig)
 
 plot_route_sales_per_month(route_sales_df)
 
 
 # --- Customer Impact on Route Sales ---
-st.header("Customer Impact on Route Sales")
+#st.header("Customer Impact on Route Sales")
 customer_route_sales_df = db.get_customer_sales_per_route()
 
 # Convert 'month' column to categorical with the correct order
@@ -153,8 +153,8 @@ def plot_customer_impact_on_route_sales(df):
 
     fig.update_xaxes(tickangle=-45)  # Rotate x-axis labels for better readability
 
-    st.plotly_chart(fig)
+    #st.plotly_chart(fig)
 
-plot_customer_impact_on_route_sales(customer_route_sales_df)
+#plot_customer_impact_on_route_sales(customer_route_sales_df)
 # Close the database connection at the end
 db.close()

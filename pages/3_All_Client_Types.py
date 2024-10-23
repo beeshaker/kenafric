@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from conn import MySQLDatabase  # Import the Database class
+from conn1 import MySQLDatabase  # Import the Database class
 
 # Initialize the database connection
 db = MySQLDatabase()
@@ -12,8 +12,7 @@ st.sidebar.title("Filter Options")
 client_types = ['All','DISTRIBUTORS', 'SPECIAL DISTRIBUTOR', 'MINIMART', 'KABL OFFICE', 'M/BIKE','SUPERMARKET', 'KABL STAFF','SCHOOLS','LOCAL CUSTOMERS','CORPORATES']
 selected_client_type = st.sidebar.selectbox("Select Client Type", client_types)
 
-percentage_options = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-selected_percentage = st.sidebar.selectbox("Select Percentage of Top Clients", percentage_options)
+selected_percentage = st.sidebar.slider("Select Percentage", 0, 100, 1)
 
 # --- New Page for Top Clients Based on Selection ---
 st.title(f"Top {selected_percentage}% {selected_client_type} by Sales")
@@ -80,7 +79,7 @@ fig_bar.update_layout(
 
 # Display the bar chart
 st.plotly_chart(fig_bar)
-
+top_clients_df[['total_sales', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']] = top_clients_df[['total_sales', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']].round(0)
 # Display the top clients DataFrame
 st.write(top_clients_df)
 

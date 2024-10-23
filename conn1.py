@@ -7,10 +7,12 @@ import pandas as pd
 class MySQLDatabase():
     def __init__(self):
   
-        self.host = "digiage.co.ke"
-        self.user = "digiagec_vscu"
-        self.password = "NN9RqO0JsU~w"
-        self.database = "digiagec_kenafric"
+        self.host = "localhost"
+        self.user = "root"
+        self.password = "pass"
+        self.database = "kenafric"
+        self.conn = None
+        self.cursor = None
         
       
         
@@ -131,7 +133,7 @@ class MySQLDatabase():
             GROUP BY 
                 route_wise_sales.route, customer_master.bp_name, customer_wise_sales.month
         ) AS ranked_customers
-        WHERE rankk <= 5
+        WHERE rankk<= 5
         ORDER BY route, month;
         """
         df = pd.read_sql(query, self.conn)
@@ -286,6 +288,26 @@ class MySQLDatabase():
         else:
             query += " GROUP BY customer_name, item_description"
             df = pd.read_sql(query, self.conn, params=[client_name])
+        
+        return df
+    
+    
+    def get_client_sales_per_month(self, client_name):
+        query = """
+            SELECT 
+                item_description, 
+                month,
+                SUM(quantity) AS total_quantity_sold,
+                SUM(sales_amt) AS sales_amt
+            FROM 
+                sales_per_client
+            WHERE 
+                customer_name = %s
+            GROUP BY item_description, month
+            ORDER BY month
+        """
+        # Fetch the data and return it as a DataFrame
+        df = pd.read_sql(query, self.conn, params=[client_name])
         
         return df
     
@@ -745,7 +767,7 @@ class MySQLDatabase():
         params = [product] + valid_sales_managers
         df = pd.read_sql(query, self.conn, params=params)
 
-        # Rank sales managers within each month based on sales amount
+        # `rank`sales managers within each month based on sales amount
         df['rank'] = df.groupby('month')['total_sales_amt'].rank(ascending=False)
 
         return df

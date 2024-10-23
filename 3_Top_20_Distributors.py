@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from conn import MySQLDatabase  # Import the Database class
+from conn1 import MySQLDatabase  # Import the Database class
 
 # Initialize the database connection
 db = MySQLDatabase()
