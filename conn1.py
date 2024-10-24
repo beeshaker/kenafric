@@ -6,13 +6,22 @@ import pandas as pd
 
 class MySQLDatabase():
     def __init__(self):
-  
+        
+        self.host = "database-1.c9wq6somacoq.ap-south-1.rds.amazonaws.com"
+        self.user = "beeshaker"
+        self.password = "eNJD7QvFIT1"
+        self.database = "kenafric"
+        self.conn = None
+        self.cursor = None
+        '''
         self.host = "localhost"
         self.user = "root"
         self.password = "pass"
         self.database = "kenafric"
         self.conn = None
         self.cursor = None
+        '''
+        
         
       
         
