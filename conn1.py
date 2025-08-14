@@ -50,6 +50,27 @@ class MySQLDatabase():
         if self.conn:
             self.conn.close()
             print("Connection closed")
+
+
+    def get_overall_sales_per_month(self):
+        """
+        Returns the total sales per month from the customer_wise_sales table.
+        Expected output: DataFrame with columns ['month', 'total_sales']
+        """
+        query = """
+            SELECT 
+                month,
+                SUM(total_ar_invoice) AS total_sales
+            FROM customer_wise_sales
+            GROUP BY month
+            ORDER BY 
+                    FIELD(month, 'Jan', 'Feb', 'March', 'April', 'May', 'June', 
+                                'July', 'August', 'September', 'October', 'November', 'December');
+        """
+        df = pd.read_sql(query, self.conn)
+        return df
+
+
             
     def get_top_customers(self):
         query = """
